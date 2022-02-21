@@ -44,4 +44,14 @@ $router->route('/all',['GET','POST'],function(){
 $router->run(function(){
     echo '404 not found';
 });
-
+```
+## htaccess example
+```
+DirectoryIndex index.php
+RewriteEngine on
+<IfModule mod_rewrite.c>
+      RewriteCond %{REQUEST_FILENAME} !-f
+      RewriteCond %{REQUEST_FILENAME} !-d
+      RewriteRule ^(.+)$ index.php [L]
+</IfModule>
+```
