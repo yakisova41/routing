@@ -1,5 +1,8 @@
 # Yakisova41/routing
 ## Usage
+```sh
+composer require yakisova41/routing
+```
 ```php
 require_once 'vendor/autoload.php';
 
