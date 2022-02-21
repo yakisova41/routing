@@ -21,25 +21,29 @@ class Routing{
     }   
 
     public function run($notfound = false){
+        if($this->check() != true){
+            if(!$notfound){
+                print('<h1>Not Found</h1><p>The requested URL was not found on this server</p><hr><p>Yakisova41/routing</p>');
+            }else{
+                $notfound();
+            }
+        }
+    }
+    
+    private function check(){
         foreach($this->routings[$this->method] as $key => $router){
             if($router[0] == $this->reqpath){
                 $router[1](false);
+                return true;
             }
             elseif($this->parameter($router[0],$this->reqpath)[0]){
                 $router[1]($this->parameter($router[0],$this->reqpath)[1]);
+                return true;
             }
-            else{
-                if(!$notfound){
-                    print('<h1>Not Found</h1><p>The requested URL was not found on this server</p><hr><p>Yakisova41/routing</p>');
-                }else{
-                    $notfound();
-                }
-
-            }
-        }   
+        } 
     }
-
-    public function parameter($path,$req){
+    
+    private function parameter($path,$req){
         $plodepath = explode('/',$path);
         $plodereqpath = explode('/',$req);
         $params = [];
