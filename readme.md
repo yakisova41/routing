@@ -24,36 +24,36 @@ third parameter
 |Write the process
 */
 
-$router->route('/',['GET'],function($this){
+$router->route('/',['GET'],function(){
     echo 'Toppage!!!';
 });
 
-$router->route('/page/{id}',['GET'],function($param,$this){
+$router->route('/page/{id}',['GET'],function($param){
     echo 'page';
     echo $param['id'];
 });
 
-$router->route('/all',['GET','POST'],function($this){
+$router->route('/all',['GET','POST'],function(){
     echo 'Both post and get are welcome!';
 });
 
-$router->route('/user/{id}',['GET'],function($param,$this){
+$router->route('/user/{id}',['GET'],function($param,$a){
     if($param['id'] == 1){
         echo 'hello';
     }
     else{
-        $this->notfound(function(){
+        $a->notfound(function(){
             echo '404 not found';
         });
     }
 });
 
-$router->route('/post/{id}',['GET'],function($param,$this){
+$router->route('/post/{id}',['GET'],function($param,$a){
     if($param['id'] == 1){
         echo 'hello';
     }
     else{
-        $this->notfound();
+        $a->notfound();
     }
 });
 
