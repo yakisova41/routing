@@ -22,6 +22,7 @@ class Routing{
 
     public function run($notfound = false){
         if($this->check() != true){
+            header("HTTP/1.1 404 Not Found");
             if(!$notfound){
                 print('<h1>Not Found</h1><p>The requested URL was not found on this server</p><hr><p>Yakisova41/routing</p>');
             }else{
@@ -30,14 +31,23 @@ class Routing{
         }
     }
     
+    public function notfound($notfound = false){
+        header("HTTP/1.1 404 Not Found");
+        if(!$notfound){
+            print('<h1>Not Found</h1><p>The requested URL was not found on this server</p><hr><p>Yakisova41/routing</p>');
+        }else{
+            $notfound();
+        }
+    }
+
     private function check(){
         foreach($this->routings[$this->method] as $key => $router){
             if($router[0] == $this->reqpath){
-                $router[1](false);
+                $router[1]($this);
                 return true;
             }
             elseif($this->parameter($router[0],$this->reqpath)[0]){
-                $router[1]($this->parameter($router[0],$this->reqpath)[1]);
+                $router[1]($this->parameter($router[0],$this->reqpath)[1],$this);
                 return true;
             }
         } 
