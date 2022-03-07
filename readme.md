@@ -24,17 +24,37 @@ third parameter
 |Write the process
 */
 
-$router->route('/',['GET'],function(){
+$router->route('/',['GET'],function($this){
     echo 'Toppage!!!';
 });
 
-$router->route('/page/{id}',['GET'],function($param){
+$router->route('/page/{id}',['GET'],function($param,$this){
     echo 'page';
     echo $param['id'];
 });
 
-$router->route('/all',['GET','POST'],function(){
+$router->route('/all',['GET','POST'],function($this){
     echo 'Both post and get are welcome!';
+});
+
+$router->route('/user/{id}',['GET'],function($param,$this){
+    if($param['id'] == 1){
+        echo 'hello';
+    }
+    else{
+        $this->notfound(function(){
+            echo '404 not found';
+        });
+    }
+});
+
+$router->route('/post/{id}',['GET'],function($param,$this){
+    if($param['id'] == 1){
+        echo 'hello';
+    }
+    else{
+        $this->notfound();
+    }
 });
 
 /*    Start routing
@@ -44,14 +64,4 @@ $router->route('/all',['GET','POST'],function(){
 $router->run(function(){
     echo '404 not found';
 });
-```
-## htaccess example
-```
-DirectoryIndex index.php
-RewriteEngine on
-<IfModule mod_rewrite.c>
-      RewriteCond %{REQUEST_FILENAME} !-f
-      RewriteCond %{REQUEST_FILENAME} !-d
-      RewriteRule ^(.+)$ index.php [L]
-</IfModule>
 ```
