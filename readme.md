@@ -37,25 +37,40 @@ $router->route('/all',['GET','POST'],function(){
     echo 'Both post and get are welcome!';
 });
 
-$router->route('/user/{id}',['GET'],function($param,$a){
+$router->route('/user/{id}',['GET'],function($param,$res){
     if($param['id'] == 1){
         echo 'hello';
     }
     else{
-        $a->notfound(function(){
+        $res->notfound(function(){
             echo '404 not found';
         });
     }
 });
 
-$router->route('/post/{id}',['GET'],function($param,$a){
+$router->route('/post/{id}',['GET'],function($param,$res){
     if($param['id'] == 1){
         echo 'hello';
     }
     else{
-        $a->notfound();
+        $res->notfound();
     }
 });
+
+
+
+$text = 'TEXT';
+
+$router->route('/text',['GET'],function($res,$text){
+    echo $text;
+    // TEXT
+},$text);
+
+
+$router->route('/text/{id}',['GET'],function($param,$res,$text){
+    echo $text;
+    // TEXT
+},$text);
 
 /*    Start routing
 --------------------------

@@ -16,9 +16,9 @@ class Routing{
         }
     }
 
-    public function route($path,$method,$function,$ifnotfound = false){
+    public function route($path,$method,$function,$pass_to_var = false){
         foreach($method as $key => $val){
-            $this->routings[$val][] = ["$path",$function];
+            $this->routings[$val][] = ["$path",$function,$pass_to_var];
         }
     }   
 
@@ -36,11 +36,11 @@ class Routing{
     private function check(){
         foreach($this->routings[$this->method] as $key => $router){
             if($router[0] == $this->reqpath){
-                $router[1](new In_middleware);
+                $router[1](new In_middleware,$router[2]);
                 return true;
             }
             elseif($this->parameter($router[0],$this->reqpath)[0]){
-                $router[1]($this->parameter($router[0],$this->reqpath)[1],new In_middleware);
+                $router[1]($this->parameter($router[0],$this->reqpath)[1],new In_middleware,$router[2]);
                 return true;
             }
         } 
