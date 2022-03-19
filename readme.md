@@ -1,82 +1,55 @@
 # Yakisova41/routing
-## Usage
+## Getting Started
 ```sh
 composer require yakisova41/routing
 ```
 ```php
-require_once 'vendor/autoload.php';
+use Yakisova41\routing\Routing;
 
-use Yakisova41\Routing\Routing;
+$router = new Routing($_SERVER['REQUEST_URI'],$_SERVER['REQUEST_METHOD']);
 
-//The first argument is the request path and the second argument is the request method
-$router = new Routing(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH),$_SERVER['REQUEST_METHOD']);
-
-/*    Defining Routing
---------------------------
-first parameter
-|Please enter a path
-|{enclose in brackets} parameter can be set
-
-second parameter
-|Enter the method as an array in all capital letters
-
-third parameter
-|Write the process
-*/
-
-$router->route('/',['GET'],function(){
-    echo 'Toppage!!!';
+$router->route('/',['GET'],function($notfound){
+    echo 'get';
 });
 
-$router->route('/page/{id}',['GET'],function($param){
-    echo 'page';
-    echo $param['id'];
+
+$router->route('/',['POST'],function($notfound){
+    echo 'post';
 });
 
-$router->route('/all',['GET','POST'],function(){
-    echo 'Both post and get are welcome!';
+$router->route('/',['GET','POST'],function($notfound){
+    echo 'get and post';
 });
 
-$router->route('/user/{id}',['GET'],function($param,$res){
-    if($param['id'] == 1){
-        echo 'hello';
-    }
-    else{
-        $res->notfound(function(){
-            echo '404 not found';
-        });
+
+$var = 'ABCD';
+$router->route('/',['GET'],function($notfound, $variable){
+    echo 'this is ABCD ==>>> '.$variable;
+},$var);
+
+
+$router->route('/user/{id}',['GET'],function($notfound, $var, $param){
+    echo 'your id is'.$param['id'];
+
+    if($param['id'] != 1)
+    {
+        $notfound->notfound(function($id){
+            echo 'user page only notfound page';
+            echo $id.'was not found';
+        },$param['id']);
     }
 });
 
-$router->route('/post/{id}',['GET'],function($param,$res){
-    if($param['id'] == 1){
-        echo 'hello';
-    }
-    else{
-        $res->notfound();
-    }
-});
+$router->require('/blog/{number}',['GET'],'blogtemplage.php',$var,['notfound','vars','params']);
 
 
+$router->run();
 
-$text = 'TEXT';
-
-$router->route('/text',['GET'],function($res,$text){
-    echo $text;
-    // TEXT
-},$text);
-
-
-$router->route('/text/{id}',['GET'],function($param,$res,$text){
-    echo $text;
-    // TEXT
-},$text);
-
-/*    Start routing
---------------------------
- The argument specifies the behavior at 404, and can be omitted (in that case, the default 404 page will be displayed)
-*/
 $router->run(function(){
-    echo '404 not found';
+    echo 'custom notfound page';
 });
-```
+
+$var = 'custom';
+$router->run(function($var){
+    echo $var.' notfound page';
+},$var);
