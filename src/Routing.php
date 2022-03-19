@@ -95,17 +95,17 @@ class Routing
             if($params !== false)
             {
                 $this_tree['function']($notfounder, $this_tree['vars'], $params, $this_tree['file'], $this_tree['var_names']);
+                return true;
             }
             elseif($this_tree['path'] === $this->request_path)
             {
                 $this_tree['function']($notfounder, $this_tree['vars'], false, $this_tree['file'], $this_tree['var_names']);
-            }
-            else
-            {
-                header('HTTP/1.1 404 Notfound');
-                $when_notfound_function($when_notfound_function_passvar);
+                return true;
             }
         }
+        
+        header('HTTP/1.1 404 Notfound');
+        $when_notfound_function($when_notfound_function_passvar);
     }
 
     public function require($path, $methods, $function_file, $passing_variable = false, $varnames = ['notfounder','vars','params'])
