@@ -13,10 +13,8 @@ class Routing
     public function __construct($request_path = false, $request_method = false)
     {
         /*
-        -------------------------------------------------------------------------------------
-        Checks if the request path and request method are specified as arguments,and if not,
-        specifies them automatically, and then assigns them to member functions.  
-        -------------------------------------------------------------------------------------
+        *Checks if the request path and request method are specified as arguments,and if not,
+        *specifies them automatically, and then assigns them to member functions.  
         */
         if($request_path === false)
         {
@@ -28,16 +26,20 @@ class Routing
         }   
         $this->request_path = $request_path;
         $this->request_method = $request_method;  
+
+        //Initialization of routing tree
+        $this->routing_tree = ['GET'=>[],'POST'=>[]];
     }
 
+
     /*
-    --------------------------------------------------------------------------  
-    Define routing.
-    The first argument is the path
-    Second argument is a method
-    Third argument: function or anonymous function to execute
-    The fourth argument can be any variable you wish to pass.
-    --------------------------------------------------------------------------         
+    *--------------------------------------------------------------------------  
+    *Define routing.
+    *The first argument is the path
+    *Second argument is a method
+    *Third argument: function or anonymous function to execute
+    *The fourth argument can be any variable you wish to pass.
+    *--------------------------------------------------------------------------         
     */    
     public function route($path, $methods, $function, $passing_variable = false)
     {
@@ -53,9 +55,20 @@ class Routing
         }
     }
 
-    
+
+    /* 
+    *--------------------------------------------------------------------------   
+    *Performs routing.
+    *Locates the desired tree in the array assigned to the 
+    *routing_tree member function and executes an unnamed function in the tree.
+    *--------------------------------------------------------------------------   
+    */    
     public function run($when_notfound_function = false, $when_notfound_function_passvar = false)
     {
+        /*
+        *If the argument specifying the behavior on 404 is false,
+        *assign an anonymous function to when_notfound_function that displays the default 404 page.
+        */
         if(!$when_notfound_function)
         {
             $when_notfound_function_passvar = $this->request_path;
@@ -64,9 +77,13 @@ class Routing
             };
         }
 
-        $notfounder = new class($when_notfound_function, $when_notfound_function_passvar) 
+
+        /*
+        *Define notfounder so that notfound can be called from within the middleware
+        */
+        $notfounder = new class($when_notfound_function, $when_notfound_function_passvar){
+            public function __construct($when_notfound_function, $when_notfound_function_passvar)
             {
-            public function __construct($when_notfound_function, $when_notfound_function_passvar){
                 $this->function = $when_notfound_function;
                 $this->var = $when_notfound_function_passvar;
             }
@@ -81,12 +98,14 @@ class Routing
                 header('HTTP/1.1 404 Notfound');
                 $function($var);
             }
-            };
+        };
 
-
-        $routing_tree_nowmethod = $this->routing_tree[$this->request_method];
+        /*
+        *The GET and POST arrays in the routing tree, whichever array matches the current method
+        */
+        $routing_tree_matchmethod = $this->routing_tree[$this->request_method];
         
-        foreach($routing_tree_nowmethod as $this_tree)
+        foreach($routing_tree_matchmethod as $this_tree)
         {
             $parameter_datas = $this->path_parameter_decomposition($this_tree['path']);
 
@@ -103,15 +122,28 @@ class Routing
                 return true;
             }
         }
-        
+
+        /**
+         * If a middleware call occurs once in foreach and no return is made, a 404 status code 
+         * is sent and the process specified in when_notfound_function is executed.
+         */
         header('HTTP/1.1 404 Notfound');
         $when_notfound_function($when_notfound_function_passvar);
     }
 
+
+    /*
+    *-------------------------------------------
+    *Registering external files with routingtree
+    *-------------------------------------------
+    */
     public function require($path, $methods, $function_file, $passing_variable = false, $varnames = ['notfounder','vars','params'])
     {
         $function = function($notfounder, $vars, $params, $function_file, $varnames)
         {
+            /*
+            *If a variable name is specified in the fifth argument, the notfounder, vars, and params, variables are renamed.
+            */
             $notfounder_name = $varnames[0];
             $vars_name = $varnames[1];
             $params_name = $varnames[2];
@@ -135,6 +167,12 @@ class Routing
         }
     }
 
+
+    /* 
+    *--------------------------------------------------------------------------   
+    *Decompose a path with path parameters and return them as data
+    *--------------------------------------------------------------------------   
+    */
     private function path_parameter_decomposition($path)
     {
         $splited_paths = explode('/',$path);
@@ -155,6 +193,13 @@ class Routing
     }
 
 
+    /* 
+    *--------------------------------------------------------------------------   
+    *Scrutinizes the disassembled path parameter data, the path, and the
+    *current request path, and returns an array of 
+    *parameters if a match is found, or false if no match is found
+    *--------------------------------------------------------------------------   
+    */
     private function path_parameter_verification($path, $parameter_datas, $reqpath)
     {
         $params =  [];
