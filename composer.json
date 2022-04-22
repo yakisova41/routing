@@ -1,15 +1,12 @@
 {
     "name": "yakisova41/routing",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "Yakisova41\\Routing\\": "src/"
         }
     },
-    "authors": [
-        {
-            "name": "yakisova41",
-            "email": "yakisoba5emon@gmail.com"
-        }
-    ],
-    "require": {}
+    "require": {
+        "php": ">= 7.0.0"
+    }
 }
