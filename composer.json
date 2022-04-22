@@ -1,0 +1,15 @@
+{
+    "name": "yakisova41/routing",
+    "autoload": {
+        "psr-4": {
+            "Yakisova41\\Routing\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "yakisova41",
+            "email": "yakisoba5emon@gmail.com"
+        }
+    ],
+    "require": {}
+}
