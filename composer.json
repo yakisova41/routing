@@ -3,10 +3,10 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Yakisova41\\Routing\\":  "src/"
+            "Yakisova41\\Routing\\": "src/"
         }
     },
     "require": {
-        "php": ">= 7.0.0"
+        "php": ">= 8.1.0"
     }
 }
