@@ -8,6 +8,6 @@
     },
     "require": {
         "php": ">= 8.1.0"
-        "yakisova41/moduleloader":"1.0"
+        "yakisova41/moduleloader":"^1.0"
     }
 }
