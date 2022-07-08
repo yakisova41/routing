@@ -12,7 +12,7 @@ class Routing
         /**
          * Setting the options
          */
-        self::setOptions($options, 'requestUri', $_SERVER['REQUEST_URI']);
+        self::setOptions($options, 'requestUri', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
         self::setOptions($options, 'requestMethod', $_SERVER['REQUEST_METHOD']);
 
         /**
@@ -36,7 +36,7 @@ class Routing
         }
     }
 
-    private static function setOptions(array $optionitem, string $optionname, mixed $defaultOption)
+    private static function setOptions(array | bool $optionitem, string $optionname, mixed $defaultOption)
     {
         if(isset($optionitem[$optionname])){
             self::$options[$optionname] = $optionitem[$optionname];
